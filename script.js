@@ -41,8 +41,7 @@ function cargarReparto(movieId, movieTitle) {
         });
 }
 
-function buscarPelicula() {
-    const query = document.getElementById('searchInput').value;
+function buscarPelicula(query) {
     if (query.trim() !== '') {
         const searchUrl = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&language=es-MX&api_key=${API_KEY}`;
 
@@ -52,6 +51,7 @@ function buscarPelicula() {
                 const widget = document.getElementById('movieWidget');
                 if (data.results && data.results.length > 0) {
                     const movie = data.results[0];
+                    document.getElementById('searchInput').value = query;
                     cargarReparto(movie.id, movie.title);
                 } else {
                     widget.innerHTML = '<div class="error-msg">No se encontró ninguna película con ese nombre.</div>';
@@ -63,8 +63,22 @@ function buscarPelicula() {
     }
 }
 
+// Al presionar Enter en el buscador interno del widget
 document.getElementById('searchInput').addEventListener('keypress', function(event) {
     if (event.key === 'Enter') {
-        buscarPelicula();
+        buscarPelicula(document.getElementById('searchInput').value);
     }
 });
+
+// Al cargar la página, lee la película desde la URL (ej: ?movie=Matrix)
+window.onload = function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieParam = urlParams.get('movie');
+
+    if (movieParam) {
+        buscarPelicula(movieParam);
+    } else {
+        // Película por defecto si el enlace no lleva parámetro
+        buscarPelicula('Titanic');
+    }
+};
