@@ -9,8 +9,8 @@ function cargarReparto(movieId, movieTitle) {
             const widget = document.getElementById('movieWidget');
             
             if (data.cast && data.cast.length > 0) {
-                // Tomamos los primeros 10 actores principales para el diseño horizontal
-                const topCast = data.cast.slice(0, 10);
+                // Aumentamos a 18 actores para aprovechar el nuevo ancho
+                const topCast = data.cast.slice(0, 18);
                 
                 let castHtml = `<div class="widget-title">Reparto: ${movieTitle}</div><div class="cast-list">`;
                 
