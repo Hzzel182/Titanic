@@ -11,7 +11,7 @@ function cargarReparto(movieId, movieTitle) {
             if (data.cast && data.cast.length > 0) {
                 const topCast = data.cast.slice(0, 18);
                 
-                let castHtml = `<div class="widget-title">Reparto: ${movieTitle}</div><div class="cast-list">`;
+                let castHtml = `<div class="widget-title">${movieTitle}</div><div class="cast-list">`;
                 
                 topCast.forEach(actor => {
                     const profileUrl = actor.profile_path 
@@ -54,7 +54,6 @@ function buscarPeliculaPorNombre(query, year) {
                 const widget = document.getElementById('movieWidget');
                 if (data.results && data.results.length > 0) {
                     const movie = data.results[0];
-                    document.getElementById('searchInput').value = query;
                     cargarReparto(movie.id, movie.title);
                 } else {
                     widget.innerHTML = '<div class="error-msg">No se encontró ninguna película con ese nombre.</div>';
@@ -70,7 +69,6 @@ function buscarPeliculaPorId(id) {
     const idStr = id.toString();
     let url;
     
-    // Si el ID empieza con "tt", usa el buscador externo de IMDb en TMDB
     if (idStr.startsWith('tt')) {
         url = `https://api.themoviedb.org/3/find/${idStr}?external_source=imdb_id&language=es-MX&api_key=${API_KEY}`;
     } else {
@@ -90,7 +88,6 @@ function buscarPeliculaPorId(id) {
             }
 
             if (movie && movie.id && movie.title) {
-                document.getElementById('searchInput').value = movie.title;
                 cargarReparto(movie.id, movie.title);
             } else {
                 document.getElementById('movieWidget').innerHTML = '<div class="error-msg">Película no encontrada por ID.</div>';
@@ -100,12 +97,6 @@ function buscarPeliculaPorId(id) {
             console.error('Error al buscar por ID:', error);
         });
 }
-
-document.getElementById('searchInput').addEventListener('keypress', function(event) {
-    if (event.key === 'Enter') {
-        buscarPeliculaPorNombre(document.getElementById('searchInput').value);
-    }
-});
 
 window.onload = function() {
     const urlParams = new URLSearchParams(window.location.search);
