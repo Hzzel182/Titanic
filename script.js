@@ -66,17 +66,34 @@ function buscarPeliculaPorNombre(query, year) {
     }
 }
 
-function buscarPeliculaPorId(movieId) {
-    const movieUrl = `https://api.themoviedb.org/3/movie/${movieId}?language=es-MX&api_key=${API_KEY}`;
+function buscarPeliculaPorId(id) {
+    const idStr = id.toString();
+    let url;
     
-    fetch(movieUrl)
+    // Si el ID empieza con "tt", usa el buscador externo de IMDb en TMDB
+    if (idStr.startsWith('tt')) {
+        url = `https://api.themoviedb.org/3/find/${idStr}?external_source=imdb_id&language=es-MX&api_key=${API_KEY}`;
+    } else {
+        url = `https://api.themoviedb.org/3/movie/${idStr}?language=es-MX&api_key=${API_KEY}`;
+    }
+    
+    fetch(url)
         .then(response => response.json())
-        .then(movie => {
-            if (movie.id && movie.title) {
+        .then(data => {
+            let movie = null;
+            if (idStr.startsWith('tt')) {
+                if (data.movie_results && data.movie_results.length > 0) {
+                    movie = data.movie_results[0];
+                }
+            } else {
+                movie = data;
+            }
+
+            if (movie && movie.id && movie.title) {
                 document.getElementById('searchInput').value = movie.title;
                 cargarReparto(movie.id, movie.title);
             } else {
-                document.getElementById('movieWidget').innerHTML = '<div class="error-msg">ID de película no encontrado.</div>';
+                document.getElementById('movieWidget').innerHTML = '<div class="error-msg">Película no encontrada por ID.</div>';
             }
         })
         .catch(error => {
