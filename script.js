@@ -41,9 +41,12 @@ function cargarReparto(movieId, movieTitle) {
         });
 }
 
-function buscarPelicula(query) {
+function buscarPeliculaPorNombre(query, year) {
     if (query.trim() !== '') {
-        const searchUrl = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&language=es-MX&api_key=${API_KEY}`;
+        let searchUrl = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&language=es-MX&api_key=${API_KEY}`;
+        if (year) {
+            searchUrl += `&primary_release_year=${year}`;
+        }
 
         fetch(searchUrl)
             .then(response => response.json())
@@ -63,22 +66,41 @@ function buscarPelicula(query) {
     }
 }
 
-// Al presionar Enter en el buscador interno del widget
+function buscarPeliculaPorId(movieId) {
+    const movieUrl = `https://api.themoviedb.org/3/movie/${movieId}?language=es-MX&api_key=${API_KEY}`;
+    
+    fetch(movieUrl)
+        .then(response => response.json())
+        .then(movie => {
+            if (movie.id && movie.title) {
+                document.getElementById('searchInput').value = movie.title;
+                cargarReparto(movie.id, movie.title);
+            } else {
+                document.getElementById('movieWidget').innerHTML = '<div class="error-msg">ID de película no encontrado.</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error al buscar por ID:', error);
+        });
+}
+
 document.getElementById('searchInput').addEventListener('keypress', function(event) {
     if (event.key === 'Enter') {
-        buscarPelicula(document.getElementById('searchInput').value);
+        buscarPeliculaPorNombre(document.getElementById('searchInput').value);
     }
 });
 
-// Al cargar la página, lee la película desde la URL (ej: ?movie=Matrix)
 window.onload = function() {
     const urlParams = new URLSearchParams(window.location.search);
+    const movieIdParam = urlParams.get('id');
     const movieParam = urlParams.get('movie');
+    const yearParam = urlParams.get('year');
 
-    if (movieParam) {
-        buscarPelicula(movieParam);
+    if (movieIdParam) {
+        buscarPeliculaPorId(movieIdParam);
+    } else if (movieParam) {
+        buscarPeliculaPorNombre(movieParam, yearParam);
     } else {
-        // Película por defecto si el enlace no lleva parámetro
-        buscarPelicula('Titanic');
+        buscarPeliculaPorNombre('Titanic');
     }
 };
