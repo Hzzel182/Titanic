@@ -1,23 +1,23 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #191919; /* Color exacto del modo oscuro de Notion */
+    background-color: #191919; /* Fondo oscuro exacto de Notion */
     color: #ffffff;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    min-height: 100vh;
+    padding: 12px;
     margin: 0;
-    padding: 20px;
     box-sizing: border-box;
 }
 
 .search-container {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     display: flex;
     gap: 10px;
 }
 
+/* Tamaño original restaurado para el input */
 input {
     padding: 12px 18px;
     border-radius: 8px;
@@ -33,6 +33,7 @@ input:focus {
     border-color: #555555;
 }
 
+/* Tamaño original restaurado para el botón */
 button {
     padding: 12px 22px;
     border-radius: 8px;
@@ -40,6 +41,7 @@ button {
     background-color: #ffffff;
     color: #000000;
     font-weight: bold;
+    font-size: 15px;
     cursor: pointer;
     transition: background 0.2s;
 }
@@ -51,22 +53,22 @@ button:hover {
 .tmdb-widget {
     background-color: #191919;
     border: none;
-    border-radius: 16px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 5px;
     width: 900px;
     max-width: 95vw;
     box-shadow: none;
 }
 
 .widget-title {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     color: #888888;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     border-bottom: 1px solid #2f2f2f;
-    padding-bottom: 10px;
+    padding-bottom: 8px;
 }
 
 .cast-list {
