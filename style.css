@@ -51,8 +51,8 @@ button:hover {
     border: 1px solid #1a1a1a;
     border-radius: 16px;
     padding: 25px;
-    width: 550px;
-    max-width: 90vw;
+    width: 900px; /* Ancho ampliado */
+    max-width: 95vw;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
 }
 
