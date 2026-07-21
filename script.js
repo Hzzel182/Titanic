@@ -9,7 +9,6 @@ function cargarReparto(movieId, movieTitle) {
             const widget = document.getElementById('movieWidget');
             
             if (data.cast && data.cast.length > 0) {
-                // Aumentamos a 18 actores para aprovechar el nuevo ancho
                 const topCast = data.cast.slice(0, 18);
                 
                 let castHtml = `<div class="widget-title">Reparto: ${movieTitle}</div><div class="cast-list">`;
@@ -64,5 +63,8 @@ function buscarPelicula() {
     }
 }
 
-// Carga inicial con Titanic (ID: 597)
-cargarReparto(597, 'Titanic');
+document.getElementById('searchInput').addEventListener('keypress', function(event) {
+    if (event.key === 'Enter') {
+        buscarPelicula();
+    }
+});
