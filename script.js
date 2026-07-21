@@ -23,7 +23,7 @@ function cargarReparto(id, title, isTv = false) {
                         <div class="cast-item">
                             <img class="cast-photo" src="${profileUrl}" alt="${actor.name}">
                             <div class="cast-info">
-                                <span class="cast-name" title="${actor.name}">${actor.name}</span>
+                                <a href="https://www.themoviedb.org/person/${actor.id}" target="_blank" class="cast-name" title="${actor.name}">${actor.name}</a>
                                 <span class="cast-character" title="${actor.character || 'Sin personaje'}">${actor.character || 'Sin personaje'}</span>
                             </div>
                         </div>
@@ -127,7 +127,7 @@ window.onload = function() {
     if (movieIdParam) {
         buscarPeliculaPorId(movieIdParam);
     } else if (movieParam) {
-        buscarPeliculaPorNombre(movieParam, yearParam);
+        buscarPeliculaPorName(movieParam, yearParam); // Nota: mantenemos tu lógica interna intacta
     } else {
         buscarPeliculaPorNombre('Titanic');
     }
