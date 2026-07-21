@@ -51,9 +51,8 @@ button:hover {
     border: 1px solid #1a1a1a;
     border-radius: 16px;
     padding: 25px;
-    width: 380px;
-    max-height: 520px;
-    overflow-y: auto;
+    width: 550px;
+    max-width: 90vw;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.9);
 }
 
@@ -70,39 +69,70 @@ button:hover {
 
 .cast-list {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
+    flex-direction: row;
+    gap: 20px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+}
+
+.cast-list::-webkit-scrollbar {
+    height: 6px;
+}
+
+.cast-list::-webkit-scrollbar-track {
+    background: #0a0a0a;
+    border-radius: 3px;
+}
+
+.cast-list::-webkit-scrollbar-thumb {
+    background: #222222;
+    border-radius: 3px;
 }
 
 .cast-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 15px;
+    text-align: center;
+    min-width: 100px;
+    max-width: 100px;
 }
 
 .cast-photo {
-    width: 48px;
-    height: 48px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid #222222;
+    margin-bottom: 8px;
 }
 
 .cast-info {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
 .cast-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
 }
 
 .cast-character {
-    font-size: 12px;
+    font-size: 11px;
     color: #666666;
     margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
 }
 
 .loading, .error-msg {
