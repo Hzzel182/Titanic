@@ -127,7 +127,7 @@ window.onload = function() {
     if (movieIdParam) {
         buscarPeliculaPorId(movieIdParam);
     } else if (movieParam) {
-        buscarPeliculaPorName(movieParam, yearParam); // Nota: mantenemos tu lógica interna intacta
+        buscarPeliculaPorNombre(movieParam, yearParam);
     } else {
         buscarPeliculaPorNombre('Titanic');
     }
