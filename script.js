@@ -1,7 +1,8 @@
 const API_KEY = '0ba50b1a0e817c1f5e8ba94951a3a3c2'; 
 
-function cargarReparto(movieId, movieTitle) {
-    const creditsUrl = `https://api.themoviedb.org/3/movie/${movieId}/credits?language=es-MX&api_key=${API_KEY}`;
+function cargarReparto(id, title, isTv = false) {
+    const mediaType = isTv ? 'tv' : 'movie';
+    const creditsUrl = `https://api.themoviedb.org/3/${mediaType}/${id}/credits?language=es-MX&api_key=${API_KEY}`;
 
     fetch(creditsUrl)
         .then(response => response.json())
@@ -11,7 +12,7 @@ function cargarReparto(movieId, movieTitle) {
             if (data.cast && data.cast.length > 0) {
                 const topCast = data.cast.slice(0, 18);
                 
-                let castHtml = `<div class="widget-title">${movieTitle}</div><div class="cast-list">`;
+                let castHtml = `<div class="widget-title">${title}</div><div class="cast-list">`;
                 
                 topCast.forEach(actor => {
                     const profileUrl = actor.profile_path 
@@ -54,9 +55,9 @@ function buscarPeliculaPorNombre(query, year) {
                 const widget = document.getElementById('movieWidget');
                 if (data.results && data.results.length > 0) {
                     const movie = data.results[0];
-                    cargarReparto(movie.id, movie.title);
+                    cargarReparto(movie.id, movie.title, false);
                 } else {
-                    widget.innerHTML = '<div class="error-msg">No se encontró ninguna película con ese nombre.</div>';
+                    widget.innerHTML = '<div class="error-msg">No se encontró ningún resultado con ese nombre.</div>';
                 }
             })
             .catch(error => {
@@ -67,35 +68,57 @@ function buscarPeliculaPorNombre(query, year) {
 
 function buscarPeliculaPorId(id) {
     const idStr = id.toString();
-    let url;
     
     if (idStr.startsWith('tt')) {
-        url = `https://api.themoviedb.org/3/find/${idStr}?external_source=imdb_id&language=es-MX&api_key=${API_KEY}`;
-    } else {
-        url = `https://api.themoviedb.org/3/movie/${idStr}?language=es-MX&api_key=${API_KEY}`;
-    }
-    
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            let movie = null;
-            if (idStr.startsWith('tt')) {
+        // Búsqueda externa por ID de IMDb (sirve tanto para películas como para series)
+        const url = `https://api.themoviedb.org/3/find/${idStr}?external_source=imdb_id&language=es-MX&api_key=${API_KEY}`;
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
                 if (data.movie_results && data.movie_results.length > 0) {
-                    movie = data.movie_results[0];
+                    const movie = data.movie_results[0];
+                    cargarReparto(movie.id, movie.title, false);
+                } else if (data.tv_results && data.tv_results.length > 0) {
+                    const tv = data.tv_results[0];
+                    cargarReparto(tv.id, tv.name, true);
+                } else {
+                    document.getElementById('movieWidget').innerHTML = '<div class="error-msg">Contenido no encontrado por ID de IMDb.</div>';
                 }
-            } else {
-                movie = data;
-            }
-
-            if (movie && movie.id && movie.title) {
-                cargarReparto(movie.id, movie.title);
-            } else {
-                document.getElementById('movieWidget').innerHTML = '<div class="error-msg">Película no encontrada por ID.</div>';
-            }
-        })
-        .catch(error => {
-            console.error('Error al buscar por ID:', error);
-        });
+            })
+            .catch(error => {
+                console.error('Error al buscar por IMDb ID:', error);
+            });
+    } else {
+        // Es un ID numérico de TMDB: primero intentamos como película
+        const movieUrl = `https://api.themoviedb.org/3/movie/${idStr}?language=es-MX&api_key=${API_KEY}`;
+        
+        fetch(movieUrl)
+            .then(response => {
+                if (response.ok) {
+                    return response.json().then(movie => {
+                        cargarReparto(movie.id, movie.title, false);
+                    });
+                } else {
+                    // Si falla como película, intentamos como serie de TV (TV Show)
+                    const tvUrl = `https://api.themoviedb.org/3/tv/${idStr}?language=es-MX&api_key=${API_KEY}`;
+                    return fetch(tvUrl)
+                        .then(tvResponse => {
+                            if (tvResponse.ok) {
+                                return tvResponse.json().then(tv => {
+                                    cargarReparto(tv.id, tv.name, true);
+                                });
+                            } else {
+                                document.getElementById('movieWidget').innerHTML = '<div class="error-msg">Película o serie no encontrada por ID.</div>';
+                            }
+                        });
+                }
+            })
+            .catch(error => {
+                console.error('Error al buscar por ID numérico:', error);
+                document.getElementById('movieWidget').innerHTML = '<div class="error-msg">Error al conectar con la API.</div>';
+            });
+    }
 }
 
 window.onload = function() {
