@@ -1,35 +1,44 @@
 const API_KEY = '0ba50b1a0e817c1f5e8ba94951a3a3c2'; 
 
-function cargarDetalles(movieId) {
-    const detailUrl = `https://api.themoviedb.org/3/movie/${movieId}?language=es-MX&api_key=${API_KEY}`;
+function cargarReparto(movieId, movieTitle) {
+    const creditsUrl = `https://api.themoviedb.org/3/movie/${movieId}/credits?language=es-MX&api_key=${API_KEY}`;
 
-    fetch(detailUrl)
+    fetch(creditsUrl)
         .then(response => response.json())
-        .then(movie => {
+        .then(data => {
             const widget = document.getElementById('movieWidget');
-            const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=Sin+Imagen';
-            const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : 'N/D';
-            const genresHtml = movie.genres.map(g => `<span class="genre-tag">${g.name}</span>`).join('');
-            const hours = Math.floor(movie.runtime / 60);
-            const minutes = movie.runtime % 60;
-            const runtimeStr = movie.runtime ? `${hours}h ${minutes}m` : 'N/D';
             
-            widget.innerHTML = `
-                <img class="tmdb-poster" src="${posterUrl}" alt="${movie.title}">
-                <div class="tmdb-content">
-                    <h2 class="tmdb-title">${movie.title}</h2>
-                    <div class="tmdb-genres">${genresHtml}</div>
-                    <div class="tmdb-info">
-                        <span>📅 ${releaseYear}</span>
-                        <span>⏱️ ${runtimeStr}</span>
-                        <span>⭐ ${movie.vote_average.toFixed(1)}</span>
-                    </div>
-                    <p class="tmdb-overview">${movie.overview || 'Sin descripción disponible.'}</p>
-                </div>
-            `;
+            if (data.cast && data.cast.length > 0) {
+                // Tomamos los primeros 8 actores principales
+                const topCast = data.cast.slice(0, 8);
+                
+                let castHtml = `<div class="widget-title">Reparto: ${movieTitle}</div><div class="cast-list">`;
+                
+                topCast.forEach(actor => {
+                    const profileUrl = actor.profile_path 
+                        ? `https://image.tmdb.org/t/p/w185${actor.profile_path}` 
+                        : 'https://via.placeholder.com/150/000000/333333?text=N/D';
+                    
+                    castHtml += `
+                        <div class="cast-item">
+                            <img class="cast-photo" src="${profileUrl}" alt="${actor.name}">
+                            <div class="cast-info">
+                                <span class="cast-name">${actor.name}</span>
+                                <span class="cast-character">${actor.character || 'Sin personaje'}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                castHtml += `</div>`;
+                widget.innerHTML = castHtml;
+            } else {
+                widget.innerHTML = '<div class="error-msg">No hay información de reparto disponible.</div>';
+            }
         })
         .catch(error => {
-            console.error('Error al cargar detalles:', error);
+            console.error('Error al cargar el reparto:', error);
+            document.getElementById('movieWidget').innerHTML = '<div class="error-msg">Error al conectar con la API.</div>';
         });
 }
 
@@ -43,9 +52,10 @@ function buscarPelicula() {
             .then(data => {
                 const widget = document.getElementById('movieWidget');
                 if (data.results && data.results.length > 0) {
-                    cargarDetalles(data.results[0].id);
+                    const movie = data.results[0];
+                    cargarReparto(movie.id, movie.title);
                 } else {
-                    widget.innerHTML = '<p style="padding:20px; color: #f59e0b; text-align:center;">No se encontró ninguna película.</p>';
+                    widget.innerHTML = '<div class="error-msg">No se encontró ninguna película con ese nombre.</div>';
                 }
             })
             .catch(error => {
@@ -55,4 +65,4 @@ function buscarPelicula() {
 }
 
 // Carga inicial con Titanic (ID: 597)
-cargarDetalles(597);
+cargarReparto(597, 'Titanic');
