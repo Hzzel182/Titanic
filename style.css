@@ -9,13 +9,35 @@ body {
 .widget-title {
     font-size: 18px;
     font-weight: bold;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
+    text-align: center; /* Centra el título en la parte superior */
 }
 
 .cast-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 12px;
+    display: flex;             /* Cambia la cuadrícula a una fila horizontal */
+    flex-wrap: nowrap;         /* Evita que los actores bajen de línea */
+    overflow-x: auto;          /* Habilita el desplazamiento horizontal */
+    gap: 15px;                 /* Espacio entre cada actor */
+    padding-bottom: 10px;      /* Espacio estético para la barra de desplazamiento */
+}
+
+/* Opcional: Personalizar un poco la barra de desplazamiento para que luzca limpia en modo oscuro */
+.cast-list::-webkit-scrollbar {
+    height: 8px;
+}
+
+.cast-list::-webkit-scrollbar-track {
+    background: #1f1f1f;
+    border-radius: 4px;
+}
+
+.cast-list::-webkit-scrollbar-thumb {
+    background: #444444;
+    border-radius: 4px;
+}
+
+.cast-list::-webkit-scrollbar-thumb:hover {
+    background: #666666;
 }
 
 .cast-item {
@@ -23,6 +45,7 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    flex: 0 0 100px; /* Mantiene un ancho fijo de 100px por tarjeta para que no se deformen */
 }
 
 .cast-photo {
