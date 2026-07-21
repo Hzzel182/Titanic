@@ -3,17 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Widget TMDB - Titanic</title>
+    <title>Widget TMDB - Buscador</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #0f172a;
             color: #f8fafc;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+        }
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background-color: #1e293b;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            width: 250px;
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            background-color: #38bdf8;
+            color: #0f172a;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #0ea5e9;
         }
         .tmdb-widget {
             background-color: #1e293b;
@@ -58,37 +87,60 @@
 </head>
 <body>
 
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Escribe otra película..." value="Titanic">
+        <button onclick="buscarPelicula()">Buscar</button>
+    </div>
+
     <div class="tmdb-widget" id="movieWidget">
         <div style="padding: 20px; text-align: center;">Cargando widget...</div>
     </div>
 
     <script>
         const API_KEY = '0ba50b1a0e817c1f5e8ba94951a3a3c2'; 
-        const MOVIE_ID = 597; // ID oficial de Titanic en TMDB
-        const URL = `https://api.themoviedb.org/3/movie/${MOVIE_ID}?language=es-MX&api_key=${API_KEY}`;
 
-        fetch(URL)
-            .then(response => response.json())
-            .then(data => {
-                const widget = document.getElementById('movieWidget');
-                const posterUrl = `https://image.tmdb.org/t/p/w500${data.poster_path}`;
-                
-                widget.innerHTML = `
-                    <img class="tmdb-poster" src="${posterUrl}" alt="${data.title}">
-                    <div class="tmdb-content">
-                        <h2 class="tmdb-title">${data.title}</h2>
-                        <div class="tmdb-info">
-                            <span>📅 ${data.release_date.split('-')[0]}</span>
-                            <span>⭐ ${data.vote_average.toFixed(1)} / 10</span>
-                        </div>
-                        <p class="tmdb-overview">${data.overview}</p>
-                    </div>
-                `;
-            })
-            .catch(error => {
-                console.error('Error al conectar con la API:', error);
-                document.getElementById('movieWidget').innerHTML = '<p style="padding:20px; color: #ef4444; text-align:center;">Error al cargar los datos. Verifica tu conexión o clave de API.</p>';
-            });
+        function cargarPelicula(query) {
+            const searchUrl = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&language=es-MX&api_key=${API_KEY}`;
+
+            fetch(searchUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const widget = document.getElementById('movieWidget');
+                    if (data.results && data.results.length > 0) {
+                        const movie = data.results[0];
+                        const posterUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750?text=Sin+Imagen';
+                        const releaseYear = movie.release_date ? movie.release_date.split('-')[0] : 'N/D';
+                        
+                        widget.innerHTML = `
+                            <img class="tmdb-poster" src="${posterUrl}" alt="${movie.title}">
+                            <div class="tmdb-content">
+                                <h2 class="tmdb-title">${movie.title}</h2>
+                                <div class="tmdb-info">
+                                    <span>📅 ${releaseYear}</span>
+                                    <span>⭐ ${movie.vote_average.toFixed(1)} / 10</span>
+                                </div>
+                                <p class="tmdb-overview">${movie.overview || 'Sin descripción disponible.'}</p>
+                            </div>
+                        `;
+                    } else {
+                        widget.innerHTML = '<p style="padding:20px; color: #f59e0b; text-align:center;">No se encontró ninguna película con ese nombre.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al conectar con la API:', error);
+                    document.getElementById('movieWidget').innerHTML = '<p style="padding:20px; color: #ef4444; text-align:center;">Error al cargar los datos.</p>';
+                });
+        }
+
+        function buscarPelicula() {
+            const query = document.getElementById('searchInput').value;
+            if (query.trim() !== '') {
+                cargarPelicula(query);
+            }
+        }
+
+        // Carga inicial con Titanic
+        cargarPelicula('Titanic');
     </script>
 </body>
 </html>
