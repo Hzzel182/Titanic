@@ -1,53 +1,14 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #191919; /* Fondo oscuro exacto de Notion */
+    background-color: #191919;
     color: #ffffff;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding: 12px;
+    padding: 10px;
     margin: 0;
     box-sizing: border-box;
-}
-
-.search-container {
-    margin-bottom: 20px;
-    display: flex;
-    gap: 10px;
-}
-
-/* Tamaño original restaurado para el input */
-input {
-    padding: 12px 18px;
-    border-radius: 8px;
-    border: 1px solid #333333;
-    background-color: #2b2b2b;
-    color: #ffffff;
-    font-size: 16px;
-    outline: none;
-    width: 280px;
-}
-
-input:focus {
-    border-color: #555555;
-}
-
-/* Tamaño original restaurado para el botón */
-button {
-    padding: 12px 22px;
-    border-radius: 8px;
-    border: none;
-    background-color: #ffffff;
-    color: #000000;
-    font-weight: bold;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-button:hover {
-    background-color: #cccccc;
 }
 
 .tmdb-widget {
@@ -58,17 +19,23 @@ button:hover {
     width: 900px;
     max-width: 95vw;
     box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+/* Título de la película centrado arriba */
 .widget-title {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    color: #888888;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 18px;
+    color: #aaaaaa;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
+    text-align: center;
+    width: 100%;
     border-bottom: 1px solid #2f2f2f;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
 }
 
 .cast-list {
@@ -78,6 +45,7 @@ button:hover {
     overflow-x: auto;
     padding-bottom: 10px;
     scroll-behavior: smooth;
+    width: 100%;
 }
 
 .cast-list::-webkit-scrollbar {
@@ -144,4 +112,5 @@ button:hover {
     padding: 20px;
     color: #777777;
     font-size: 14px;
+    width: 100%;
 }
